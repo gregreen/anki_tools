@@ -1,0 +1,85 @@
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@2.2/dist/hanzi-writer.min.js"></script>
+</head>
+
+<body>
+  <div id="stroke-order-diagram" class="inline-demo"></div>
+  <script>
+    function startRecording(canvas, filename, kbps) {
+      const chunks = []; // here we will store our recorded media chunks (Blobs)
+      const stream = canvas.captureStream(); // grab our canvas MediaStream
+      const rec = new MediaRecorder(
+        stream,
+        {
+          //mimeType: 'video/webm;codecs="vp9"',
+          mimeType: 'video/webm;codecs="vp8"',
+          videoBitsPerSecond: kbps*1024,
+        }
+      ); // init the recorder
+      // every time the recorder has new data, we will store it in our array
+      rec.ondataavailable = e => chunks.push(e.data);
+      // only when the recorder stops, we construct a complete Blob from all the chunks
+      rec.onstop = e => exportVid(
+        new Blob(chunks, {type: 'video/webm'}),
+        filename
+      );
+
+      rec.start();
+      return rec;
+    }
+
+    function exportVid(blob, filename) {
+      const vid = document.createElement('video');
+      vid.src = URL.createObjectURL(blob);
+      vid.controls = true;
+      document.body.appendChild(vid);
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = vid.src;
+      a.textContent = 'download';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      document.body.removeChild(vid);
+    }
+
+    (function() {
+      var url = new URL(window.location.href);
+
+      // Get character from URL
+      var c = url.searchParams.get('c');
+
+      // Get bitrate from URL
+      var kbps = url.searchParams.get('b');
+      kbps = (kbps == null) ? 512 : kbps;
+
+      // Get image size from URL
+      var width = url.searchParams.get('w');
+      width = (width == null) ? 512 : width;
+
+      console.log('character: ' + c);
+      console.log(kbps + ' kbps');
+      console.log(width + 'x' + width);
+
+      var writer = HanziWriter.create('stroke-order-diagram', c, {
+        width: width,
+        height: width,
+        padding: 0,
+        delayBetweenLoops: 200, // in milliseconds
+        delayBetweenStrokes: 200,
+        outlineColor: '#666',
+        strokeColor: '#fff',
+        radicalColor: '#77befb', // light blue
+        renderer: 'canvas'
+      });
+
+      canvas = document.getElementById('stroke-order-diagram').children[0];
+      canvas.style.background = 'black';
+      rec = startRecording(canvas, c+'.webm', kbps);
+      writer.animateCharacter({onComplete: function() {
+        console.log('animation complete.');
+        setTimeout(()=>rec.stop(), 100); // stop recording in 100ms
+      }});
+    })();
+  </script>
+</body>
