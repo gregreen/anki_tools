@@ -24,3 +24,16 @@ This will prompt you to download a `.webm` video. Anki can't handle `.webm` grap
     $ bash hanzi_webm2webp 跳.webm
 
 The resulting image, `跳.webp`, can be loaded into Anki.
+
+## Looking up example words for a Chinese character
+
+There is a script to find the most common example words (in Mandarin) for any given Chinese character:
+
+    $ python3 fetch_example_words.py 我 --max 2 --minimal
+
+This will return:
+
+    我们 wǒmen
+    我国 wǒguó
+
+This script makes use of a frequency list of Mandarin words, compiled by Keh-Jiann Chen and the CKIP Group of Academia Sinica. The source list is available [here](https://web.archive.org/web/20120610034235/http://childes.psy.cmu.edu/morgrams/chinese-xls.zip). Slight modifications/corrections were made to the source list, including the addition of simplified characters and corrections to the pinyin transliterations (e.g., "iou" was changed to "iu," and "ue" was changed to "üe" in various places).
