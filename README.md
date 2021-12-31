@@ -21,7 +21,7 @@ Then, to generate a diagram for a character (we'll use 跳), load up the followi
 
 This will prompt you to download a `.webm` video. Anki can't handle `.webm` graphics, so we convert it to `.webp`:
 
-    $ bash hanzi_webm2webp 跳.webm
+    $ bash hanzi_webm2webp.sh 跳.webm
 
 The resulting image, `跳.webp`, can be loaded into Anki.
 
