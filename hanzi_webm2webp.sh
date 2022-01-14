@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-fname="${1%webm}"
+fname="${1%\.webm}"
 
 ffmpeg \
   -y \
